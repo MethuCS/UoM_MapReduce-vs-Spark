@@ -1,0 +1,85 @@
+Spark
+
+1) To connect spark => spark-shell
+
+2) to load the data => val df = spark.read.format("csv").option("inferSchema", "true").option("header","true").load("s3://delayflightsbucket/input/DelayedFlights-updated.csv")
+
+3)show CSV file =>  df show()
+4) df.createOrReplaceTempView("delay_flights");
+
+5) Queries:
+spark.time(spark.sql("SELECT Year, avg((CarrierDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year").show())
+
+spark.time(spark.sql("SELECT Year, avg((NASDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year").show())
+
+spark.time(spark.sql("SELECT Year, avg((WeatherDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year").show())
+
+spark.time(spark.sql("SELECT Year, avg((LateAircraftDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year").show())
+
+spark.time(spark.sql("SELECT Year, avg((SecurityDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year").show())
+
+ 
+
+
+
+Hive
+
+1) to start the hive => hive
+
+2) to create table =>
+
+CREATE TABLE IF NOT EXISTS delay_flights (
+ id int,
+ Year int,
+ Month int,
+ DayofMonth int,
+ DayOfWeek int,
+ DepTime string,
+ CRSDepTime string,
+ ArrTime string,
+ CRSArrTime string,
+ UniqueCarrier string,
+ FlightNum int,
+ TailNum string,
+ ActualElapsedTime string,
+ CRSElapsedTime string,
+ AirTime string,
+ ArrDelay string,
+ DepDelay string,
+ Origin string,
+ Dest string,
+ Distance int,
+ TaxiIn int,
+ TaxiOut int,
+ Cancelled int,
+ CancellationCode string,
+ Diverted int,
+ CarrierDelay string,
+ WeatherDelay string,
+ NASDelay string,
+ SecurityDelay string,
+ LateAircraftDelay string)
+ COMMENT 'Delay flights Table'
+ ROW FORMAT DELIMITED
+ FIELDS TERMINATED BY ',';
+
+3) to load the data from s3 =>
+LOAD DATA INPATH 's3://delayflightsbucket/input/DelayedFlights-updated.csv' INTO TABLE delay_flights;
+
+
+
+4)to print the names of the columns as headers in result sets =>
+set hive.cli.print.header=true;
+
+5) Queries:
+
+SELECT Year, avg((CarrierDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year;
+
+SELECT Year, avg((NASDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year;
+
+SELECT Year, avg((WeatherDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year;
+
+SELECT Year, avg((LateAircraftDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year;
+
+SELECT Year, avg((SecurityDelay /ArrDelay)*100) from delay_flights WHERE Year>=2003 AND Year<=2010 GROUP BY Year ORDER BY Year;
+
